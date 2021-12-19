@@ -1,0 +1,59 @@
+#!/bin/bash
+# +----------------------------------------------------------------------------+
+# | CPS v.01 * Camera Picture Storage                                          |
+# | Copyright (C) 2016 Pozsar Zsolt <pozsarzs@gmail.com>                       |
+# | cps_removeoldfiles                                                         |
+# | remove files at end of storing times                                       |
+# +----------------------------------------------------------------------------+
+
+loadconfiguration()
+{
+  CFGFILE="/usr/local/etc/cps.conf"
+  DIR_HOURS="00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23"
+
+  DIR_CAMERAS=`cat $CFGFILE | grep dir_cameras= | sed 's/dir_cameras=//'`
+  DIR_STORAGE=`cat $CFGFILE | grep dir_storage= | sed 's/dir_storage=//'`
+  DAY_STORING=`cat $CFGFILE | grep day_storing= | sed 's/day_storing=//'`
+  DAY_S=$(($DAY_STORING+1))
+
+  if [ ! -f $CFGFILE ]
+    then 
+      echo "Configuration file (cps.conf) is not exist!"
+      exit 1
+  fi
+}
+
+removedirectories()
+{
+  for Y in $DIR_HOURS
+  do
+    ls $1/$Y/* 2>/dev/null | xargs rm --force
+    rm --force --recursive $1
+  done
+}
+  
+collectoldpictures()
+{
+  if [ -z $1 ]; then exit; fi
+  DIRS=`ls $DIR_STORAGE/$1 2>/dev/null`
+  if [ -z DIRS ]; then exit; fi
+  NOW=`date +%s`
+  for X in $DIRS
+  do
+    DDATE=`date -r $DIR_STORAGE/$1/$X +%s`
+    MAXDDATE=$(($DDATE+$((86400*$DAY_S))))
+    if [ $NOW -gt $MAXDDATE ]
+    then
+      removedirectories $DIR_STORAGE/$1/$X
+    fi
+  done
+}
+
+# Main function
+  loadconfiguration
+  for Y in $DIR_CAMERAS
+  do
+    collectoldpictures $Y
+  done
+  exit 0
+

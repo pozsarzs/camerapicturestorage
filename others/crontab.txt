@@ -1,0 +1,4 @@
+0 0,12 * * *		/usr/local/sbin/cps_makeskeleton >/dev/null 2>&1
+4,19,34,49 * * * *	/usr/local/sbin/cps_movefiles >/dev/null 2>&1
+2 1,13 * * *		/usr/local/sbin/cps_removeoldfiles >/dev/null 2>&1
+

@@ -1,0 +1,35 @@
+#!/bin/bash
+# +----------------------------------------------------------------------------+
+# | CPS v0.1 * Camera Picture Storage                                          |
+# | Copyright (C) 2016 Pozsar Zsolt <pozsarzs@gmail.com>                       |
+# | uninstall                                                                  |
+# | Uninstaller script                                                         |
+# +----------------------------------------------------------------------------+
+
+# constans
+SWN="CPS"
+SWV=`cat documents/VERSION`
+INSTDIR=/usr/local
+
+# installer
+clear
+echo "--------------------------------------------------------------------------------"
+echo "$SWN $SWV uninstaller script"
+echo "Copyright (C) 2016 Pozsar Zsolt <pozsarzs@gmail.com>"
+echo "--------------------------------------------------------------------------------"
+if [ `whoami` != 'root' ]
+then echo 'ERROR: You are not root!'; exit
+fi
+sleep 1
+echo "Uninstalling..."
+echo "- removing files:"
+rm --force $INSTDIR/share/doc/cps/*
+echo "  $INSTDIR/share/doc/cps/*"
+rm --force $INSTDIR/sbin/cps_*
+echo "  $INSTDIR/sbin/cps_*"
+rm --force $INSTDIR/etc/cps.conf
+echo "  $INSTDIR/etc/cps.conf"
+echo "- removing directory:"
+rmdir $INSTDIR/share/doc/cps/ 2> /dev/null
+echo "  $INSTDIR/share/doc/cps/"
+echo "Done."

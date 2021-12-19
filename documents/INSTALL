@@ -1,0 +1,97 @@
+Installation instruction
+========================
+
+Requirements
+- minimal Linux operation system (without X);
+- installed sshd for remote administration;
+- installed proftpd for upload and view pictures.
+
+Installation
+- Create 'camera' and 'operator' users without home directory and login:
+   # adduser --disabled-login --no-create-home camera
+   # passwd camera
+   # adduser --disabled-login --no-create-home operator
+   # passwd operator
+
+- Install and set CPS:
+  # tar -xzf cps-0.1-noarch.tar.gz
+  # install
+  # vi /usr/local/etc/cps.conf
+    ----------------------------------------------------------- cps.conf -
+    # Set upload directory name, owner and permission:
+    dir_upload=/home/ftp/upload
+    dir_uowner=root:camera
+    dir_upermission=770
+
+    # Set storage directory name, owner and permission:
+    dir_storage=/home/ftp/storage
+    dir_sowner=root:root
+    dir_spermission=755
+
+    # Set camera subdirectories:
+    dir_cameras=camera1 camera2 camera3 camera4
+
+    # Set stored files owner and permission:
+    fle_owner=root:operator
+    fle_permission=640
+
+    # Set maximal storing time in days:
+    day_storing=3
+    ----------------------------------------------------------------------
+  # /usr/local/sbin/cps_makeskeleton
+  
+- Create ftp directory and set proftpd, use sample file (others/proftpd.conf):
+  # mkdir /home/ftp
+  # vi /etc/proftpd.conf
+    ------------------------------------------------------- proftpd.conf -
+    AllowOverwrite              on
+    DefaultRoot                 /home/ftp/
+    DefaultServer               on
+    DeferWelcome                off
+    DenyFilter                  \*.*/
+    DisplayFirstChdir           .message
+    DisplayLogin                welcome.msg
+    Group                       nogroup
+    LsDefaultOptions            "-l"
+    MaxInstances                30
+    MultilineRFC2228            on
+    Port                        21
+    ServerName                  "CPS"
+    ServerType                  standalone
+    ShowSymlinks                on
+    TimeoutIdle                	1200
+    TimeoutNoTransfer           600
+    TimeoutStalled              600
+    User                        nobody
+    <Directory /home/ftp/lost+found>
+      <Limit ALL>
+        DenyAll
+      </Limit>
+    </Directory>
+    <Directory /home/ftp/upload>
+      <Limit ALL>
+        DenyAll
+      </Limit>
+      <Limit DIRS READ WRITE>
+        AllowUser camera
+      </Limit>
+    </Directory>
+    <Directory /home/ftp/storage>
+      <Limit ALL>
+        DenyAll
+      </Limit>
+      <Limit DIRS READ WRITE>
+        AllowUser operator
+      </Limit>
+    </Directory>
+    ----------------------------------------------------------------------
+  # /etc/init.d/proftpd restart
+
+- Set Cron, use sample file (others/crontab.txt):
+  # crontab -e
+    ----------------------------------------- Add to crontab this lines! -
+    0 0,12 * * *        /usr/local/sbin/cps_makeskeleton >/dev/null 2>&1
+    4,19,34,49 * * * *  /usr/local/sbin/cps_movefiles >/dev/null 2>&1
+    2 1,13 * * *        /usr/local/sbin/cps_removeoldfiles >/dev/null 2>&1
+    ----------------------------------------------------------------------
+

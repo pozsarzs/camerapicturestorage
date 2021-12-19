@@ -1,0 +1,58 @@
+#!/bin/bash
+# +----------------------------------------------------------------------------+
+# | CPS v.01 * Camera Picture Storage                                          |
+# | Copyright (C) 2016 Pozsar Zsolt <pozsarzs@gmail.com>                       |
+# | cps_movefiles                                                              |
+# | move uploaded files to own directories                                     |
+# +----------------------------------------------------------------------------+
+
+loadconfiguration()
+{
+  CFGFILE="/usr/local/etc/cps.conf"
+
+  DIR_CAMERAS=`cat $CFGFILE | grep dir_cameras= | sed 's/dir_cameras=//'`
+  DIR_SOWNER=`cat $CFGFILE | grep dir_sowner= | sed 's/dir_sowner=//'`
+  DIR_SPERMISSION=`cat $CFGFILE | grep dir_spermission= | sed 's/dir_spermission=//'`
+  DIR_STORAGE=`cat $CFGFILE | grep dir_storage= | sed 's/dir_storage=//'`
+  DIR_UPLOAD=`cat $CFGFILE | grep dir_upload= | sed 's/dir_upload=//'`
+  FLE_OWNER=`cat $CFGFILE | grep fle_owner= | sed 's/fle_owner=//'`
+  FLE_PERMISSION=`cat $CFGFILE | grep fle_permission= | sed 's/fle_permission=//'`
+
+  if [ ! -f $CFGFILE ]
+    then 
+      echo "Configuration file (cps.conf) is not exist!"
+      exit 1
+  fi
+}
+  
+movefiles()
+{
+  if [ -z $1 ]; then exit; fi
+
+  FILES=`ls $DIR_UPLOAD/$1/* 2>/dev/null`
+  if [ -z FILES ]; then exit; fi
+
+  for X in $FILES
+  do
+    FDATE=`date -r $X +%y-%m-%d`
+    FTIME=`date -r $X +%H`
+    chown $FLE_OWNER $X
+    chmod $FLE_PERMISSION $X
+    if [ ! -d $DIR_STORAGE/$1/$FDATE/$FTIME ]
+    then
+      mkdir --parent $DIR_STORAGE/$1/$FDATE/$FTIME
+      chown $DIR_SOWNER $DIR_STORAGE/$1/$FDATE/$FTIME
+      chmod $DIR_SPERMISSION $DIR_STORAGE/$1/$FDATE/$FTIME
+    fi
+    mv --force $X $DIR_STORAGE/$1/$FDATE/$FTIME/
+  done
+}
+
+# Main function
+  loadconfiguration
+  for Y in $DIR_CAMERAS
+  do
+    movefiles $Y
+  done
+  exit 0
+

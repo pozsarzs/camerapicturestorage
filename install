@@ -1,0 +1,61 @@
+#!/bin/bash
+# +----------------------------------------------------------------------------+
+# | CPS v0.1 * Camera Picture Storage                                          |
+# | Copyright (C) 2016 Pozsar Zsolt <pozsarzs@gmail.com>                       |
+# | install                                                                    |
+# | Installer script                                                           |
+# +----------------------------------------------------------------------------+
+
+# constans
+SWN="CPS"
+SWV=`cat documents/VERSION`
+INSTDIR=/usr/local
+SUBDIRS="etc \
+         sbin \
+         share \
+         share/doc \
+         share/doc/cps"
+README=$INSTDIR/share/doc/cps/README
+
+# installer
+clear
+echo "--------------------------------------------------------------------------------"
+echo "$SWN $SWV installer script"
+echo "Copyright (C) 2016 Pozsar Zsolt <pozsarzs@gmail.com>"
+echo "--------------------------------------------------------------------------------"
+if [ `whoami` != 'root' ]
+then echo 'ERROR: You are not root!'; exit
+fi
+echo "   This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by the
+Free Software Foundation, either version 3 of the License, or (at your
+option) any later version.
+
+   This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>."
+echo "--------------------------------------------------------------------------------"
+sleep 3
+echo "Installing..."
+echo "- creating directories:"
+mkdir --parents $INSTDIR 2> /dev/null
+for D in $SUBDIRS
+do
+  mkdir --parents $INSTDIR/$D 2> /dev/null
+  echo "  $INSTDIR/$D"
+done
+echo "- copying files:"
+cp documents/* $INSTDIR/share/doc/cps/
+echo "  documents/* -> $INSTDIR/share/doc/cps/"
+cp scripts/cps_* $INSTDIR/sbin/
+echo "  scripts/cps_* -> $INSTDIR/sbin/"
+cp scripts/*.conf $INSTDIR/etc/
+echo "  scripts/*.conf -> $INSTDIR/etc/"
+echo "Done."
+echo ""
+echo "Thank you for installing $SWN,"
+echo "see $README for more information."

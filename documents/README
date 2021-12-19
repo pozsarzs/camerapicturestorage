@@ -1,0 +1,88 @@
+CPS - Camera picture storage
+============================
+
+I. General information
+----------------------
+You can build a cheap picture storage for your security cameras from a linux
+distribution and this scripts. It store pictures and delete it on end of
+storing time. It does not require special maintenance.
+
+a. Upload
+Use 'camera' user for upload pictures. This user have read/write permission
+for all camera directories.
+
+Defaults:
+  Upload user:         camera
+  Number of cameras:   4
+  FTP port:            21
+  Upload directories:  upload/camera1/
+                       upload/camera2/
+                       upload/camera3/
+                       upload/camera4/
+
+b. Store and download
+Use 'operator' user for download pictures to your computer. This user have
+read-only permission for all camera directories.
+
+Defaults:
+  Download user:       operator
+  Storing time:        3 days
+  Storage directories: storage/camera1/DATE/HOUR/
+                       storage/camera2/DATE/HOUR/
+                       storage/camera3/DATE/HOUR/
+                       storage/camera4/DATE/HOUR/
+
+  (e.g.: storage/camera1/16-04-11/10/ pictures of camera1 between
+         10.00-10.59 on 11/04/2016.)
+
+c. Users and access:
+             local login    SSH login      FTP login       mode
+  root           +             +               -
+  camera         -             -           upload/*/       Read/Write
+  operator       -             -           storage/*/*/*/  Read-only
+
+II. Requirements
+----------------
+- minimal Linux operation system (without X);
+- installed sshd for remote administration;
+- installed proftpd for upload and view pictures.
+
+III. Installation and settings
+------------------------------
+Installer package is cps-0.1-noarch.shar.
+See INSTALL for detailed information.
+
+IV. Download and contact
+------------------------
+  Homepage:                          http://www.pozsarzs.hu
+  Facebook:                          http://www.facebook.com/pozsarzs.hu
+
+  Contact:                           Pozsar Zsolt (self-employed)
+  E-mail:                            pozsarzs@gmail.com
+  Phone and fax:                     +36 56/470-272
+  Mobilphone:                        +36 30/359-8783
+  Postal address:                    Pozsar Zsolt
+                                     Kurazsi Fo ut 1., HU-5430 Tiszafoldvar
+                                     Hungary
+
+  Tax ID:                            60407850-1-36
+  Reg. number:                       20703695
+
+V. Important information
+-------------------------
+CPS * Camera picture storage
+Copyright (C) 2016 Pozsár Zsolt <pozsarzs@gmail.com>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>.
+

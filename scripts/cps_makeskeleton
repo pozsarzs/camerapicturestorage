@@ -1,0 +1,52 @@
+#!/bin/bash
+# +----------------------------------------------------------------------------+
+# | CPS v.01 * Camera Picture Storage                                          |
+# | Copyright (C) 2016 Pozsar Zsolt <pozsarzs@gmail.com>                       |
+# | cps_makeskeleton                                                           |
+# | make directory skeleton                                                    |
+# +----------------------------------------------------------------------------+
+
+loadconfiguration()
+{
+  CFGFILE="/usr/local/etc/cps.conf"
+  DDATE=`date +%y-%m-%d`
+  DIR_HOURS="00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23"
+
+  DIR_CAMERAS=`cat $CFGFILE | grep dir_cameras= | sed 's/dir_cameras=//'`
+  DIR_UOWNER=`cat $CFGFILE | grep dir_uowner= | sed 's/dir_uowner=//'`
+  DIR_UPERMISSION=`cat $CFGFILE | grep dir_upermission= | sed 's/dir_upermission=//'`
+  DIR_SOWNER=`cat $CFGFILE | grep dir_sowner= | sed 's/dir_sowner=//'`
+  DIR_SPERMISSION=`cat $CFGFILE | grep dir_spermission= | sed 's/dir_spermission=//'`
+  DIR_STORAGE=`cat $CFGFILE | grep dir_storage= | sed 's/dir_storage=//'`
+  DIR_UPLOAD=`cat $CFGFILE | grep dir_upload= | sed 's/dir_upload=//'`
+
+  if [ ! -f $CFGFILE ]
+    then 
+      echo "Configuration file (cps.conf) is not exist!"
+      exit 1
+  fi
+}
+  
+makeskeleton()
+{
+  if [ -z $1 ]; then exit; fi
+  mkdir --parents $DIR_UPLOAD/$1
+  chown $DIR_UOWNER $DIR_UPLOAD/$1
+  chmod $DIR_UPERMISSION $DIR_UPLOAD/$1
+  for X in $DIR_HOURS
+  do
+    mkdir --parents $DIR_STORAGE/$1/$2/$X
+    chown $DIR_SOWNER $DIR_STORAGE/$1/$2/$X
+    chmod $DIR_SPERMISSION $DIR_STORAGE/$1/$2/$X
+  done
+}
+
+# Main function
+  loadconfiguration
+  for Y in $DIR_CAMERAS
+  do
+    makeskeleton $Y $DDATE
+  done
+  rmdir --ignore-fail-on-non-empty /root/$DDATE 2>/dev/null
+  exit 0
+
