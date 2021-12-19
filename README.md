@@ -1,7 +1,7 @@
 **CPS * Camera picture storage**  
 Copyright (C) 2016 Pozsár Zsolt <pozsarzs@gmail.com>  
 Homepage: <http://www.pozsarzs.hu>  
-GitHub: <https://github.com/pozsarzs/cps>
+GitHub: <https://github.com/pozsarzs/camerapicturestorage>
 
 **Software**
 
